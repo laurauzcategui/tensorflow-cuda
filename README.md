@@ -46,7 +46,9 @@ While poking around in the codelab for setting up the environment, one of the op
 # How to setup your gaming laptop with NVIDIA Graphic Cards to use Tensorflow.
 
 ## NVIDIA requirements to run TensorFlow with GPU support
-1. CUDA® Toolkit 8.0. For details, see NVIDIA's documentation. Ensure that you append the relevant Cuda pathnames to the LD_LIBRARY_PATH environment variable as described in the NVIDIA documentation.
+
+### 1. CUDA® Toolkit 8.0.
+For details, see NVIDIA's documentation. Ensure that you append the relevant Cuda pathnames to the LD_LIBRARY_PATH environment variable as described in the NVIDIA documentation.
 
 
 - In order to get the CUDA Toolkit, first verify if you have a CUDA capable GPU
@@ -92,32 +94,104 @@ Then, install the headers for the current version of the kernel you are running 
 
 ### Post installation actions ###
 
-* Setup your environment.
+* Setup your environment variables.
 
   `export PATH=/usr/local/cuda-8.0/bin${PATH:+:${PATH}}`
 
 If you use the runfile method, additionally export the following, depending if you are:
-  * Running on 64 bit
+  * Running on **64 bit**
 
   `export LD_LIBRARY_PATH=/usr/local/cuda-8.0/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}`
 
-  * Running on 32 bit
+  * Running on **32 bit**
 
-2. The NVIDIA drivers associated with CUDA Toolkit 8.0.
-cuDNN v6.0. For details, see NVIDIA's documentation. Ensure that you create the CUDA_HOME environment variable as described in the NVIDIA documentation.
-
-
-3. GPU card with CUDA Compute Capability 3.0 or higher. See NVIDIA documentation for a list of supported GPU cards.
-
-*********
+  `export LD_LIBRARY_PATH=/usr/local/cuda-8.0/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}`
 
 
+Now verify your cuda samples are correctly installed once you have installed the toolkit.
 
-Checkout your graphic card model 
-Check secureboot is disabled
-Check your graphic card is enabled via Bios
+`ls /usr/local/cuda-8.0/samples`
 
-Installation Guide Linux :: CUDA Toolkit Documentation
-The installation instructions for the CUDA Toolkit on Linux.docs.nvidia.com
-NVIDIA cuDNN
-The NVIDIA CUDA® Deep Neural Network library (cuDNN) is a GPU-accelerated library of primitives for deep neural…developer.nvidia.com
+## Verify your installation.
+</br>
+
+- Verify the driver version, by checking in the proc.
+
+  `cat /proc/driver/nvidia/version`
+
+- Check the version of the toolkit you are running by checking with nvcc, which is the CUDA compiler driver.
+
+ </br>
+ `nvcc -v`
+> The compilation trajectory involves several splitting, compilation, preprocessing, and merging steps for each CUDA source file. It is the purpose of nvcc, the CUDA compiler driver, to hide the intricate details of CUDA compilation from developers
+
+- As the purpose of demonstration, lets compile one of the samples, DeviceQuery will give us all properties of the CUDA devices present in the system. Let's compile the sample:
+
+  - Enter to the folder where the sample is located
+    </br>
+  `cd /usr/local/cuda-8.0/samples/1_Utilities/deviceQuery`
+  </br>
+
+  - compile the sample
+    </br>
+    `sudo make`
+  - Execute the deviceQuery tool.
+  </br>
+  `./deviceQuery`
+
+**Note**: If you get an error like this:
+
+> unsupported GNU version! gcc versions later than 5 are not supported!
+
+You can solved by creating a symbolik link from a previous version of gcc to your cuda binaries.
+
+`sudo ln -s /usr/bin/gcc-4.9 /usr/local/cuda/bin/gcc`
+
+`sudo ln -s /usr/bin/g++-4.9 /usr/local/cuda/bin/g++`
+
+### 2. The NVIDIA drivers associated with CUDA Toolkit 8.0.
+
+### 3. The NVIDIA CUDA® Deep Neural Network library (cuDNN) is a GPU-accelerated library of primitives for deep neural networks. cuDNN v6.0.
+
+- Install the Runtime Library: </br>
+  `sudo dpkg -i libcudnn7_7.0.4.31-1+cuda8.0_amd64.deb`
+- Install Developer Library: </br>
+`sudo dpkg -i libcudnn7-dev_7.0.4.31-1+cuda8.0_amd64.deb`
+- Install docs and samples: </br>
+`sudo dpkg -i libcudnn7-doc_7.0.4.31-1+cuda8.0_amd64.deb
+`
+
+**Note**: By the time I was installing cuDNN 7.0 was not compatible with TensorFlow. As today it appears there is a new release supporting cuda 8.0
+
+## Verify your installation
+
+ - Copy your samples to a writable path. </br>
+ `cp -r /usr/src/cudnn_samples_v7/ $HOME`
+ - Enter to the wrtitable path for compiling an specific sample. </br>
+ `cd cudnn_samples_v7/mnistCUDNN/`
+ - Compile your sample <br/>
+ `make clean && make`
+ - Execute </br>
+ `sudo ./mnistCUDNN`
+
+### 3. GPU card with CUDA Compute Capability 3.0 or higher. See NVIDIA documentation for a list of supported GPU cards.
+
+### 4. The libcupti-dev library, which is the NVIDIA CUDA Profile Tools Interface. This library provides advanced profiling support.
+
+`sudo apt-get install libcupti-dev`
+
+****************
+## Now Finally, Install Tensorflow and start running your ML models.
+
+1.First you should decide how you will install TensorFlow, as there is multiple options: </br>
+
+  - Docker
+  - Virtualenv ( My option )
+  - Native pip
+  - Anaconda
+</br>
+
+
+2. Installing Tensorflow with Virtualenv on Python3 </br>
+
+sudo apt-get install python3-pip python3-dev python-virtualenv
