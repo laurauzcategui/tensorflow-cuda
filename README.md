@@ -192,6 +192,21 @@ You can solved by creating a symbolik link from a previous version of gcc to you
 </br>
 
 
-2. Installing Tensorflow with Virtualenv on Python3 </br>
+2.Installing Tensorflow with Virtualenv on Python3 </br>
 
-sudo apt-get install python3-pip python3-dev python-virtualenv
+`sudo apt-get install python3-pip python3-dev python-virtualenv`
+
+3.Create your virtualenv. </br>
+`virtualenv --system-site-packages -p python3 tensor3 `
+
+4.Activate your virtualenv </br>
+`source tensor3/bin/activate`
+
+5.Ensure pip is installed
+`easy_install -U pip`
+
+6.Install  TensorFlow
+`pip3 install --upgrade tensorflow-gpu`
+
+7. Check your installation by running the example
+`python helloWorld.py`
